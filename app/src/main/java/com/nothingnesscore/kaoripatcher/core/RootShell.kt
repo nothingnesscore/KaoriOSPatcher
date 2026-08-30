@@ -14,7 +14,7 @@ object RootShell {
             val error = errorReader.readText()
             
             if (exitCode != 0) {
-                println("Root shell error: \")
+                println("Root shell error: $error")
             }
             exitCode == 0
         } catch (e: Exception) {

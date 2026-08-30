@@ -30,7 +30,7 @@ fun HomeScreen() {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("Device Status", style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Root Access: \")
+                Text("Root Access: ${if (hasRoot) "Granted" else "Denied"}")
                 Text("ZeroMount Status: Checking...")
             }
         }

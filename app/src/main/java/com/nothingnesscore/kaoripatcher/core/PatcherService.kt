@@ -21,7 +21,7 @@ object PatcherService {
         val decompileDir = File(workDir, "framework_decompiled")
 
         // 1. Copy framework.jar from system
-        val copySuccess = RootShell.execute("cp \ \")
+        val copySuccess = RootShell.execute("cp $originalFile ${localCopy.absolutePath}")
         if (!copySuccess) {
             return@withContext "Error: Failed to copy framework.jar from system."
         }
@@ -37,9 +37,9 @@ object PatcherService {
         }
 
         // 3. Execute the actual KaoriOS shell script pipeline on device
-        RootShell.execute("chmod +x \")
+        RootShell.execute("chmod +x ${patchScript.absolutePath}")
         
-        val command = "sh \ \ \ \ \ \"
+        val command = "sh ${patchScript.absolutePath} ${localCopy.absolutePath} ${decompileDir.absolutePath} ${baksmaliJar.absolutePath} ${smaliJar.absolutePath} ${kaoriosDex.absolutePath}"
         val patchSuccess = RootShell.execute(command)
 
         if (!patchSuccess) {
