@@ -28,11 +28,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainApp() {
     var selectedTab by remember { mutableStateOf(0) }
+    var isLiquidGlassEnabled by remember { mutableStateOf(true) }
 
     Scaffold(
         bottomBar = {
             LiquidGlassNavBar(
                 selectedTab = selectedTab,
+                isLiquidGlassEnabled = isLiquidGlassEnabled,
                 onTabSelected = { selectedTab = it }
             )
         }
@@ -41,7 +43,10 @@ fun MainApp() {
             when (selectedTab) {
                 0 -> HomeScreen()
                 1 -> PatcherScreen()
-                2 -> SettingsScreen()
+                2 -> SettingsScreen(
+                    isLiquidGlassEnabled = isLiquidGlassEnabled,
+                    onLiquidGlassToggle = { isLiquidGlassEnabled = it }
+                )
             }
         }
     }

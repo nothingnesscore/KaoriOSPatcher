@@ -3,42 +3,33 @@ package com.nothingnesscore.kaoripatcher.core
 import java.io.File
 
 object ZeroMountBuilder {
-    fun buildReplacementModule(originalPath: String, modifiedFile: File): Boolean {
-        val moduleDir = "/data/adb/modules/kaorios_framework"
-        val systemDir = "$moduleDir/system/framework"
+    fun buildModuleFromZip(zipPath: String, outputDir: String = "/data/adb/modules/kaorios_toolbox"): Boolean {
+        RootShell.execute("mkdir -p $outputDir")
+        RootShell.execute("unzip -o '$zipPath' -d '$outputDir'")
+
+        // Dalvik Cache Whiteouts for ZeroMount
+        val frameworkDir = "$outputDir/system/framework"
+        RootShell.execute("mkdir -p $frameworkDir")
         
-        // Ensure module directories exist
-        if (!RootShell.execute("mkdir -p $systemDir")) {
-            return false
+        val archs = listOf("arm", "arm64", "oat")
+        for (arch in archs) {
+            RootShell.execute("touch $frameworkDir/.wh.$arch")
         }
-        
-        // Move the modified file to the module's target directory
-        if (!RootShell.execute("cp ${modifiedFile.absolutePath} $systemDir/framework.jar")) {
-            return false
-        }
-        
-        // ZeroMount requires setting permissions
-        RootShell.execute("chmod 644 $systemDir/framework.jar")
-        RootShell.execute("chown root:root $systemDir/framework.jar")
-        
-        // Create module.prop
-        val moduleProp = """
-            id=kaorios_framework
-            name=KaoriOS Framework (ZeroMount)
-            version=v2.0.4.0
-            versionCode=2040
-            author=nothingnesscore
-            description=ZeroMount compatible framework.jar module with KaoriOS payloads.
-        """.trimIndent()
-        
-        val propFile = File(modifiedFile.parentFile, "module.prop")
-        propFile.writeText(moduleProp)
-        
-        RootShell.execute("cp ${propFile.absolutePath} $moduleDir/module.prop")
-        RootShell.execute("chmod 644 $moduleDir/module.prop")
-        
-        // Optional: write a script to register susfs bindings explicitly if auto-mount is disabled
-        // For ZeroMount, the folder structure in /data/adb/modules is often enough if CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y
+
+        RootShell.execute("touch $frameworkDir/.wh.boot-framework.oat")
+        RootShell.execute("touch $frameworkDir/.wh.boot-framework.art")
+        RootShell.execute("touch $frameworkDir/.wh.boot-framework.vdex")
+        RootShell.execute("touch $frameworkDir/.wh.services.odex")
+        RootShell.execute("touch $frameworkDir/.wh.services.vdex")
+        RootShell.execute("touch $frameworkDir/.wh.services.art")
+
+        RootShell.execute("chown -R root:root $outputDir")
+        RootShell.execute("chmod -R 755 $outputDir/META-INF")
+        RootShell.execute("chmod 644 $outputDir/system.prop")
+        RootShell.execute("chmod 755 $outputDir/action.sh")
+        RootShell.execute("chmod 755 $outputDir/service.sh")
+
+        RootShell.execute("sed -i 's/^name=.*/name=KaoriOS Toolbox (ZeroMount Native)/' $outputDir/module.prop")
         
         return true
     }

@@ -7,11 +7,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    isLiquidGlassEnabled: Boolean,
+    onLiquidGlassToggle: (Boolean) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .padding(bottom = 80.dp) // Leave space for nav bar
     ) {
         Text(
             text = "Settings",
@@ -21,39 +25,25 @@ fun SettingsScreen() {
         Spacer(modifier = Modifier.height(24.dp))
         
         Card(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                var autoPatch by remember { mutableStateOf(false) }
-                var darkMode by remember { mutableStateOf(true) }
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
                 ) {
-                    Text("Auto-Patch on Startup")
-                    Switch(checked = autoPatch, onCheckedChange = { autoPatch = it })
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("Force Dark Mode")
-                    Switch(checked = darkMode, onCheckedChange = { darkMode = it })
+                    Column {
+                        Text("Liquid Glass Navigation", style = MaterialTheme.typography.titleMedium)
+                        Text("Enable HyperOS glassmorphism effects", style = MaterialTheme.typography.bodyMedium)
+                    }
+                    Switch(
+                        checked = isLiquidGlassEnabled,
+                        onCheckedChange = onLiquidGlassToggle
+                    )
                 }
             }
-        }
-        
-        Spacer(modifier = Modifier.height(24.dp))
-        
-        Button(
-            onClick = { /* Clear cache logic */ },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Clear App Cache")
         }
     }
 }
