@@ -10,6 +10,7 @@ import com.nothingnesscore.kaoripatcher.core.RootShell
 @Composable
 fun HomeScreen() {
     val hasRoot = RootShell.hasRootAccess()
+    val hasZeroMount = RootShell.isZeroMountInstalled()
 
     Column(
         modifier = Modifier
@@ -31,7 +32,7 @@ fun HomeScreen() {
                 Text("Device Status", style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("Root Access: ${if (hasRoot) "Granted" else "Denied"}")
-                Text("ZeroMount Status: Checking...")
+                Text("ZeroMount Status: ${if (hasZeroMount) "Active" else "Not Detected"}")
             }
         }
     }

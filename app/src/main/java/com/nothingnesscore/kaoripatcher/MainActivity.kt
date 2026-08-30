@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import com.nothingnesscore.kaoripatcher.ui.components.LiquidGlassNavBar
 import com.nothingnesscore.kaoripatcher.ui.screens.HomeScreen
 import com.nothingnesscore.kaoripatcher.ui.screens.PatcherScreen
+import com.nothingnesscore.kaoripatcher.ui.screens.SettingsScreen
 import com.nothingnesscore.kaoripatcher.ui.theme.KaoriOSPatcherTheme
 
 class MainActivity : ComponentActivity() {
@@ -40,7 +41,7 @@ fun MainApp() {
             when (selectedTab) {
                 0 -> HomeScreen()
                 1 -> PatcherScreen()
-                2 -> { /* Settings Screen */ }
+                2 -> SettingsScreen()
             }
         }
     }

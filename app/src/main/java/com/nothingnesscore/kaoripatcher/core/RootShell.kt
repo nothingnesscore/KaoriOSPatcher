@@ -22,8 +22,26 @@ object RootShell {
             false
         }
     }
+
+    fun executeWithOutput(command: String): String {
+        return try {
+            val process = Runtime.getRuntime().exec(arrayOf("su", "-c", command))
+            process.waitFor()
+            val reader = BufferedReader(InputStreamReader(process.inputStream))
+            reader.readText().trim()
+        } catch (e: Exception) {
+            ""
+        }
+    }
     
     fun hasRootAccess(): Boolean {
         return execute("id")
+    }
+    
+    fun isZeroMountInstalled(): Boolean {
+        // ZeroMount usually installs here
+        val ksu = execute("test -d /data/adb/ksu/modules/zeromount")
+        val magisk = execute("test -d /data/adb/modules/zeromount")
+        return ksu || magisk
     }
 }
