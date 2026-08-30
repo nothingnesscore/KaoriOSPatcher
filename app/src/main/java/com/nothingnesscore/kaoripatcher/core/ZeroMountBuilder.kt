@@ -33,4 +33,32 @@ object ZeroMountBuilder {
         
         return true
     }
+
+    fun buildReplacementModule(originalPath: String, modifiedFile: File): Boolean {
+        val moduleDir = "/data/adb/modules/kaorios_framework"
+        val systemDir = "${moduleDir}/system/framework"
+        
+        if (!RootShell.execute("mkdir -p ${systemDir}")) return false
+        if (!RootShell.execute("cp ${modifiedFile.absolutePath} ${systemDir}/framework.jar")) return false
+        
+        RootShell.execute("chmod 644 ${systemDir}/framework.jar")
+        RootShell.execute("chown root:root ${systemDir}/framework.jar")
+        
+        val archs = listOf("arm", "arm64", "oat")
+        for (arch in archs) {
+            RootShell.execute("touch ${systemDir}/.wh.${arch}")
+        }
+        RootShell.execute("touch ${systemDir}/.wh.boot-framework.oat")
+        RootShell.execute("touch ${systemDir}/.wh.boot-framework.art")
+        RootShell.execute("touch ${systemDir}/.wh.boot-framework.vdex")
+        
+        val moduleProp = "id=kaorios_framework\nname=KaoriOS Framework (ZeroMount)\nversion=v2.0.4.0\nversionCode=2040\nauthor=nothingnesscore\ndescription=ZeroMount compatible framework.jar module with KaoriOS payloads."
+        val propFile = File(modifiedFile.parentFile, "module.prop")
+        propFile.writeText(moduleProp)
+        
+        RootShell.execute("cp ${propFile.absolutePath} ${moduleDir}/module.prop")
+        RootShell.execute("chmod 644 ${moduleDir}/module.prop")
+        
+        return true
+    }
 }
